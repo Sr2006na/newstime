@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - News Website</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="text-primary">🛠 Admin Panel</h2>
+      <button class="btn btn-outline-secondary toggle-theme" onclick="toggleTheme()">🌙 Toggle Dark Mode</button>
+    </div>
+
+6lPPoXI[$T*Tep;y:m[|0GkVm8?91e
+
+    <!-- Login Section -->
+<section id="loginSection">
+  <div class="container mt-5">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+      <div id="loginResult" class="mt-3"></div> <!-- Added for error/success messages -->
+    </div>
+  </section>
+
+    <!-- Admin Section -->
+    <div id="adminSection" style="display:none">
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-tabs mt-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articles" type="button" role="tab">📝 Articles</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="breaking-tab" data-bs-toggle="tab" data-bs-target="#breaking" type="button" role="tab">🚨 Breaking News</button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics" type="button" role="tab">📊 Analytics</button>
+        </li>
+      </ul>
+
+      <!-- Tabs Content -->
+      <div class="tab-content p-3 bg-body border border-top-0" id="adminTabsContent">
+        <!-- Articles -->
+        <div class="tab-pane fade show active" id="articles" role="tabpanel">
+          <h5>Add/Edit Article</h5>
+          <form id="articleForm">
+            <input type="text" id="title" class="form-control mb-2" placeholder="Title" required />
+            <textarea id="content" class="form-control mb-2" placeholder="Content" required></textarea>
+            <input type="text" id="category" class="form-control mb-2" placeholder="Category" required />
+            <input type="url" id="imageUrl" class="form-control mb-2" placeholder="Image URL" required />
+            
+          <!-- In admin.html, replace the notification toggle button section -->
+<div class="position-relative">
+    <button class="btn btn-outline-light" onclick="toggleNotificationPanel()">
+        🔔 <span id="notifCount" class="badge bg-danger">0</span>
+    </button>
+    <div id="notifPanel" class="position-absolute bg-white shadow p-3 rounded" style="display:none; z-index:1000; width:300px; right:0;">
+        <div id="userNotifications"></div>
+    </div>
+</div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-success">Save</button>
+              <button type="button" class="btn btn-outline-secondary" id="cancelEdit" style="display:none;">Cancel</button>
+            </div>
+          </form>
+          <hr />
+          <h5>All Articles</h5>
+          <ul id="articleList" class="list-group"></ul>
+        </div>
+
+        <!-- Breaking News -->
+        <div class="tab-pane fade" id="breaking" role="tabpanel">
+          <h5>Update Breaking News</h5>
+          <form id="breakingForm">
+            <input type="text" id="breakingText" class="form-control mb-2" placeholder="Enter breaking news..." required />
+            <div class="d-flex gap-2">
+              <button class="btn btn-warning">Update</button>
+              <button type="button" class="btn btn-outline-danger" onclick="clearBreaking()">Clear</button>
+            </div>
+            <p class="mt-2">Current: <strong id="currentBreaking">Loading...</strong></p>
+          </form>
+        </div>
+
+
+
+        <!-- Analytics -->
+        <div class="tab-pane fade" id="analytics" role="tabpanel">
+          <h5>Site Analytics</h5>
+          <p>Total Views: <strong id="totalViews">0</strong></p>
+          <div class="row">
+            <div class="col-md-6"><canvas id="categoryChart" height="120"></canvas></div>
+            <div class="col-md-6"><canvas id="dailyChart" height="120"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-end mt-4">
+        <button class="btn btn-danger" id="logoutButton">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-messaging.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script src="admin.js"></script>
+</body>
+</html>

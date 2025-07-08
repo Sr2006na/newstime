@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Newstime - News Website</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="logo d-flex align-items-center">
+        <img src="logo.png" alt="Logo" />
+        <h1 class="h4 m-0">Newstime</h1>
+      </div>
+      <nav>
+        <!-- Future nav links here -->
+      </nav>
+    </div>
+  </header>
+
+  <!-- Breaking News -->
+  <div class="breaking-news-ticker text-center">
+    <marquee><span id="tickerContent">Loading Breaking News...</span></marquee>
+  </div>
+
+<!-- Notification Bell -->
+<!-- In main.html, replace the notification toggle button section -->
+<div class="position-relative">
+    <button class="btn btn-outline-light" onclick="toggleNotificationPanel()">
+        🔔 <span id="notifCount" class="badge bg-danger">0</span>
+    </button>
+    <div id="notifPanel" class="position-absolute bg-white shadow p-3 rounded" style="display:none; z-index:1000; width:300px; right:0;">
+        <div id="userNotifications"></div>
+    </div>
+</div>
+
+<!-- Notification Panel -->
+<div id="notifPanel" style="display: none; position: absolute; top: 50px; right: 20px; background: #fff; border: 1px solid #ccc; width: 320px; padding: 10px; z-index: 999;">
+  <div id="userNotifications"></div>
+</div>
+
+
+  <!-- Categories -->
+  <div id="categoryFilters" class="my-4 text-center">
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+      <!-- Dynamically generated buttons -->
+    </div>
+  </div>
+
+  <!-- Top Stories Carousel -->
+  <main class="container my-5">
+    <h2 class="section-title">Top Stories</h2>
+    <div id="topStoriesCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+      <div class="carousel-inner" id="topStoriesInner"></div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#topStoriesCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#topStoriesCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </div>
+
+    <!-- News List -->
+    <div id="newsContainer" class="row g-4"></div>
+    <div id="pagination" class="d-flex justify-content-center mt-4"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="mb-1">© 2025 Newstime</p>
+    <div>
+      <a href="privacy-policy.html" class="text-light">Privacy Policy</a> |
+      <a href="terms-of-use.html" class="text-light">Terms of Use</a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
