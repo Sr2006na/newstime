@@ -10,39 +10,31 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="container">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="logo d-flex align-items-center">
-        <img src="logo.png" alt="Logo" />
-        <h1 class="h4 m-0">Newstime</h1>
-      </div>
-      <nav>
-        <!-- Future nav links here -->
-      </nav>
+
+<header class="bg-primary text-white py-2">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="logo d-flex align-items-center">
+      <img src="logo.png" alt="Logo" />
+      <h1 class="h5 mb-0 ms-2">Newstime</h1>
     </div>
-  </header>
+    <div class="position-relative">
+      <button class="btn btn-outline-light" onclick="toggleNotificationPanel()">
+        🔔 <span id="notifCount" class="badge bg-danger">0</span>
+      </button>
+      <div id="notifPanel" class="position-absolute bg-white shadow p-3 rounded" style="display:none; z-index:1000; width:300px; right:0;">
+        <div id="userNotifications"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+
 
   <!-- Breaking News -->
   <div class="breaking-news-ticker text-center">
     <marquee><span id="tickerContent">Loading Breaking News...</span></marquee>
   </div>
-
-<!-- Notification Bell -->
-<!-- In main.html, replace the notification toggle button section -->
-<div class="position-relative">
-    <button class="btn btn-outline-light" onclick="toggleNotificationPanel()">
-        🔔 <span id="notifCount" class="badge bg-danger">0</span>
-    </button>
-    <div id="notifPanel" class="position-absolute bg-white shadow p-3 rounded" style="display:none; z-index:1000; width:300px; right:0;">
-        <div id="userNotifications"></div>
-    </div>
-</div>
-
-<!-- Notification Panel -->
-<div id="notifPanel" style="display: none; position: absolute; top: 50px; right: 20px; background: #fff; border: 1px solid #ccc; width: 320px; padding: 10px; z-index: 999;">
-  <div id="userNotifications"></div>
-</div>
 
 
   <!-- Categories -->
