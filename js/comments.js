@@ -3,29 +3,34 @@ import { db, auth } from './firebase-config.js';
 
 let currentArticleId = window.currentArticleId || "REPLACE_THIS";
 
-// 🔐 Check auth status and toggle form
+// 👤 Track login state once page loads
 auth.onAuthStateChanged(user => {
   const form = document.getElementById("commentForm");
   const loginBtn = document.getElementById("loginToComment");
+
   if (user) {
+    // User is signed in
     form?.classList.remove("d-none");
     loginBtn?.classList.add("d-none");
   } else {
+    // Not signed in
     form?.classList.add("d-none");
     loginBtn?.classList.remove("d-none");
   }
 });
 
-// 👤 Google Sign In
-window.loginToComment = function () {
+// 🔐 Login with Google (popup)
+window.loginToComment = async function () {
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(err => {
+  try {
+    await auth.signInWithPopup(provider);
+  } catch (err) {
     console.error("Login failed:", err.message);
     alert("Login failed: " + err.message);
-  });
+  }
 };
 
-// 💬 Submit comment
+// 💬 Submit a comment
 window.submitComment = async function (articleId) {
   const user = auth.currentUser;
   if (!user) return alert("You must be logged in to post a comment.");
@@ -37,8 +42,8 @@ window.submitComment = async function (articleId) {
   }
 
   const comment = {
-    name: user.displayName,
-    email: user.email,
+    name: user.displayName || "Anonymous",
+    email: user.email || "unknown",
     photo: user.photoURL || "",
     text,
     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -55,7 +60,7 @@ window.submitComment = async function (articleId) {
   }
 };
 
-// 📥 Load comments under article
+// 📥 Load comments under an article
 export async function loadComments(articleId, sort = "desc") {
   const listContainer = document.getElementById("commentList");
   if (!listContainer) return;
@@ -64,8 +69,7 @@ export async function loadComments(articleId, sort = "desc") {
     const snapshot = await db.collection("news").doc(articleId)
       .collection("comments").orderBy("timestamp", sort).get();
 
-    listContainer.innerHTML = snapshot.empty
-      ? "<p>No comments yet.</p>" : "";
+    listContainer.innerHTML = snapshot.empty ? "<p>No comments yet.</p>" : "";
 
     snapshot.forEach(doc => {
       const d = doc.data();
@@ -87,7 +91,7 @@ export async function loadComments(articleId, sort = "desc") {
   }
 }
 
-// 🔧 Admin-only: Load all comments across articles
+// 🛠️ Admin-only: Load all comments
 export function loadAllComments() {
   const container = document.getElementById("commentModerationList");
   if (!container) return;
@@ -134,13 +138,14 @@ export function loadAllComments() {
   });
 }
 
-// ❌ Admin-only delete comment
+// ❌ Delete comment (admin only)
 window.deleteComment = function (articleId, commentId) {
   if (confirm("Delete this comment?")) {
-    db.collection("news").doc(articleId).collection("comments").doc(commentId).delete().then(() => {
-      loadAllComments();
-    }).catch(err => {
-      alert("Error deleting comment: " + err.message);
-    });
+    db.collection("news").doc(articleId).collection("comments").doc(commentId)
+      .delete().then(() => {
+        loadAllComments();
+      }).catch(err => {
+        alert("Error deleting comment: " + err.message);
+      });
   }
 };
