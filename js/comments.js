@@ -3,23 +3,21 @@ import { db, auth } from './firebase-config.js';
 
 let currentArticleId = window.currentArticleId || "REPLACE_THIS";
 
-// 👤 Track login state once page loads
+// 🔐 Track login state
 auth.onAuthStateChanged(user => {
   const form = document.getElementById("commentForm");
   const loginBtn = document.getElementById("loginToComment");
 
   if (user) {
-    // User is signed in
     form?.classList.remove("d-none");
     loginBtn?.classList.add("d-none");
   } else {
-    // Not signed in
     form?.classList.add("d-none");
     loginBtn?.classList.remove("d-none");
   }
 });
 
-// 🔐 Login with Google (popup)
+// 🔐 Google Sign In
 window.loginToComment = async function () {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
@@ -30,7 +28,7 @@ window.loginToComment = async function () {
   }
 };
 
-// 💬 Submit a comment
+// 💬 Submit comment
 window.submitComment = async function (articleId) {
   const user = auth.currentUser;
   if (!user) return alert("You must be logged in to post a comment.");
@@ -60,7 +58,7 @@ window.submitComment = async function (articleId) {
   }
 };
 
-// 📥 Load comments under an article
+// 📥 Load comments under article
 export async function loadComments(articleId, sort = "desc") {
   const listContainer = document.getElementById("commentList");
   if (!listContainer) return;
@@ -69,7 +67,8 @@ export async function loadComments(articleId, sort = "desc") {
     const snapshot = await db.collection("news").doc(articleId)
       .collection("comments").orderBy("timestamp", sort).get();
 
-    listContainer.innerHTML = snapshot.empty ? "<p>No comments yet.</p>" : "";
+    listContainer.innerHTML = snapshot.empty
+      ? "<p>No comments yet.</p>" : "";
 
     snapshot.forEach(doc => {
       const d = doc.data();
