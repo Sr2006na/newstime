@@ -3,7 +3,7 @@ import { db, auth } from './firebase-config.js';
 
 let currentArticleId = window.currentArticleId || "REPLACE_THIS";
 
-// List of blocked disposable email domains
+// 🚫 Blocked disposable email domains
 const disposableDomains = [
   "mailinator.com", "yopmail.com", "tempmail.com", "tempmail.org",
   "10minutemail.com", "guerrillamail.com", "throwawaymail.com",
@@ -17,10 +17,10 @@ function isDisposableEmail(email) {
   return disposableDomains.includes(domain);
 }
 
-// 🔐 Track login state and handle session restore
+// 🔐 Track login state
 auth.onAuthStateChanged(user => {
-  const form = document.getElementById("commentForm");
-  const loginBtn = document.getElementById("loginToComment");
+  const formWrapper = document.getElementById("commentFormWrapper");
+  const loginPrompt = document.getElementById("loginPrompt");
 
   if (user) {
     if (isDisposableEmail(user.email)) {
@@ -29,15 +29,15 @@ auth.onAuthStateChanged(user => {
       return;
     }
     console.log("User logged in:", user.email);
-    form?.classList.remove("d-none");
-    loginBtn?.classList.add("d-none");
+    formWrapper?.classList.remove("d-none");
+    loginPrompt?.classList.add("d-none");
     if (currentArticleId !== "REPLACE_THIS") {
       loadComments(currentArticleId);
     }
   } else {
     console.log("User logged out.");
-    form?.classList.add("d-none");
-    loginBtn?.classList.remove("d-none");
+    formWrapper?.classList.add("d-none");
+    loginPrompt?.classList.remove("d-none");
   }
 });
 
@@ -45,7 +45,7 @@ auth.onAuthStateChanged(user => {
 window.loginToComment = async function () {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
-    // Persistence is already set in main.js, so no need to set here again
+    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     const result = await auth.signInWithPopup(provider);
     const email = result.user.email;
     if (isDisposableEmail(email)) {
@@ -76,9 +76,9 @@ window.submitComment = async function (articleId) {
   const comment = {
     name: user.displayName || "Anonymous",
     email: user.email || "unknown",
-    photo: user.photoURL || "",
     text,
     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    photo: user.photoURL || "",
     uid: user.uid
   };
 
@@ -92,7 +92,7 @@ window.submitComment = async function (articleId) {
   }
 };
 
-// 📥 Load comments under article
+// 📥 Load comments (webtoon style)
 export async function loadComments(articleId, sort = "desc") {
   const listContainer = document.getElementById("commentList");
   if (!listContainer) return;
@@ -102,24 +102,30 @@ export async function loadComments(articleId, sort = "desc") {
       .collection("comments").orderBy("timestamp", sort).get();
 
     listContainer.innerHTML = snapshot.empty
-      ? "<p>No comments yet.</p>" : "";
+      ? "<p class='text-muted'>No comments yet. Be the first to comment!</p>"
+      : "";
 
     snapshot.forEach(doc => {
       const d = doc.data();
       const date = d.timestamp?.toDate()?.toLocaleString() || "Just now";
-      const div = document.createElement("div");
-      div.className = "comment-item mb-3";
-      div.innerHTML = `
-        <div class="d-flex align-items-center mb-1">
-          ${d.photo ? `<img src="${d.photo}" class="me-2" style="width:30px;height:30px;border-radius:50%;">` : ""}
-          <strong>${d.name}</strong> <small class="text-muted">(${d.email})</small>
+      const avatar = d.photo || "default-avatar.png";
+
+      const commentHTML = `
+        <div class="toon-comment mb-3 p-2 rounded border">
+          <div class="d-flex align-items-center mb-1">
+            <img src="${avatar}" class="toon-avatar me-2" alt="avatar">
+            <div>
+              <strong class="toon-name">${d.name}</strong>
+              <div class="text-muted small">${date}</div>
+            </div>
+          </div>
+          <div class="toon-text mt-1">${d.text}</div>
         </div>
-        <div class="text-muted small">${date}</div>
-        <p class="mt-1 mb-0">${d.text}</p>`;
-      listContainer.appendChild(div);
+      `;
+      listContainer.insertAdjacentHTML("beforeend", commentHTML);
     });
   } catch (err) {
-    listContainer.innerHTML = "<p>Error loading comments.</p>";
+    listContainer.innerHTML = "<p class='text-danger'>Error loading comments.</p>";
     console.error("Error loading comments:", err);
   }
 }
