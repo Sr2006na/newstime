@@ -4,28 +4,46 @@ import { fetchCategories, fetchNews } from './news.js';
 import { loadUserNotifications, toggleNotificationPanel } from './notifications.js';
 import { auth } from './firebase-config.js';
 
+// Ensure persistent login
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .catch(error => {
+    console.error("Auth persistence error:", error.message);
+  });
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Initial data loads
   fetchBreakingNews();
   fetchCategories();
   fetchNews();
 
-  // ✅ Ensure anonymous login so users can comment and view notifications
+  // Monitor login state
   auth.onAuthStateChanged(user => {
     if (user) {
+      console.log("User logged in:", user.uid);
       loadUserNotifications(user.uid);
+
+      // Show comment section if exists
+      const commentSection = document.getElementById("commentSection");
+      if (commentSection) {
+        commentSection.style.display = "block";
+      }
     } else {
-      auth.signInAnonymously().then(userCred => {
-        loadUserNotifications(userCred.user.uid);
-      }).catch(err => {
-        console.error("Anonymous login failed", err.message);
-      });
+      console.log("User logged out");
+
+      // Hide comment section
+      const commentSection = document.getElementById("commentSection");
+      if (commentSection) {
+        commentSection.style.display = "none";
+      }
     }
   });
 
-  // Refresh breaking news every 10s
-  setInterval(fetchBreakingNews, 10000);
+  // Notification panel button
+  const notifBtn = document.querySelector("[onclick='toggleNotificationPanel()']");
+  if (notifBtn) {
+    notifBtn.addEventListener("click", toggleNotificationPanel);
+  }
 
-  // Toggle notification panel when bell icon is clicked
-  const notifBtn = document.querySelector("button[onclick*='toggleNotificationPanel']");
-  notifBtn?.addEventListener("click", toggleNotificationPanel);
+  // Refresh breaking news every 10 seconds
+  setInterval(fetchBreakingNews, 10000);
 });
