@@ -3,12 +3,31 @@ import { db, auth } from './firebase-config.js';
 
 let currentArticleId = window.currentArticleId || "REPLACE_THIS";
 
+// List of blocked disposable email domains
+const disposableDomains = [
+  "mailinator.com", "yopmail.com", "tempmail.com", "tempmail.org",
+  "10minutemail.com", "guerrillamail.com", "throwawaymail.com",
+  "getnada.com", "trashmail.com"
+];
+
+// Check if email is disposable
+function isDisposableEmail(email) {
+  if (!email) return false;
+  const domain = email.split("@")[1]?.toLowerCase();
+  return disposableDomains.includes(domain);
+}
+
 // 🔐 Track login state
 auth.onAuthStateChanged(user => {
   const form = document.getElementById("commentForm");
   const loginBtn = document.getElementById("loginToComment");
 
   if (user) {
+    if (isDisposableEmail(user.email)) {
+      alert("Temporary/disposable emails are not allowed. Please use a valid email.");
+      auth.signOut();
+      return;
+    }
     form?.classList.remove("d-none");
     loginBtn?.classList.add("d-none");
   } else {
@@ -21,7 +40,12 @@ auth.onAuthStateChanged(user => {
 window.loginToComment = async function () {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
-    await auth.signInWithPopup(provider);
+    const result = await auth.signInWithPopup(provider);
+    const email = result.user.email;
+    if (isDisposableEmail(email)) {
+      alert("Temporary/disposable emails are not allowed. Please use a valid email.");
+      await auth.signOut();
+    }
   } catch (err) {
     console.error("Login failed:", err.message);
     alert("Login failed: " + err.message);
@@ -32,6 +56,10 @@ window.loginToComment = async function () {
 window.submitComment = async function (articleId) {
   const user = auth.currentUser;
   if (!user) return alert("You must be logged in to post a comment.");
+
+  if (isDisposableEmail(user.email)) {
+    return alert("Temporary/disposable emails are not allowed to post comments.");
+  }
 
   const text = document.getElementById("commentText").value.trim();
   if (!text || text.length < 3 || text.length > 1000) {
