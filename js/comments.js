@@ -17,7 +17,7 @@ function isDisposableEmail(email) {
   return disposableDomains.includes(domain);
 }
 
-// 🔐 Track login state
+// 🔐 Track login state and handle session restore
 auth.onAuthStateChanged(user => {
   const form = document.getElementById("commentForm");
   const loginBtn = document.getElementById("loginToComment");
@@ -28,18 +28,24 @@ auth.onAuthStateChanged(user => {
       auth.signOut();
       return;
     }
+    console.log("User logged in:", user.email);
     form?.classList.remove("d-none");
     loginBtn?.classList.add("d-none");
+    if (currentArticleId !== "REPLACE_THIS") {
+      loadComments(currentArticleId);
+    }
   } else {
+    console.log("User logged out.");
     form?.classList.add("d-none");
     loginBtn?.classList.remove("d-none");
   }
 });
 
-// 🔐 Google Sign In
+// 🔐 Google Sign In with persistence
 window.loginToComment = async function () {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
+    // Persistence is already set in main.js, so no need to set here again
     const result = await auth.signInWithPopup(provider);
     const email = result.user.email;
     if (isDisposableEmail(email)) {
