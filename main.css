@@ -114,3 +114,69 @@ header {
 .comments-section .form-control {
   font-size: 0.95rem;
 }
+
+/* ===== Improved Comment Section ===== */
+.comments-section {
+  margin-top: 2rem;
+}
+
+.comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.comment:last-child {
+  border-bottom: none;
+}
+
+.comment img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.comment-body {
+  flex: 1;
+}
+
+.comment-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-left: 6px;
+}
+
+.comment-body div:last-child {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  white-space: pre-wrap; /* keeps line breaks */
+}
+
+#commentFormWrapper textarea {
+  resize: vertical;
+  min-height: 80px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#commentFormWrapper button {
+  padding: 6px 14px;
+}
+
+#loginPrompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+}
