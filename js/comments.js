@@ -28,14 +28,12 @@ auth.onAuthStateChanged(user => {
       auth.signOut();
       return;
     }
-    console.log("User logged in:", user.email);
     formWrapper?.classList.remove("d-none");
     loginPrompt?.classList.add("d-none");
     if (currentArticleId !== "REPLACE_THIS") {
       loadComments(currentArticleId);
     }
   } else {
-    console.log("User logged out.");
     formWrapper?.classList.add("d-none");
     loginPrompt?.classList.remove("d-none");
   }
@@ -53,7 +51,6 @@ window.loginToComment = async function () {
       await auth.signOut();
     }
   } catch (err) {
-    console.error("Login failed:", err.message);
     alert("Login failed: " + err.message);
   }
 };
@@ -87,12 +84,11 @@ window.submitComment = async function (articleId) {
     document.getElementById("commentText").value = "";
     loadComments(articleId);
   } catch (err) {
-    console.error("Failed to post comment", err);
     alert("Failed to post comment: " + err.message);
   }
 };
 
-// 📥 Load comments (webtoon style)
+// 📥 Load comments
 export async function loadComments(articleId, sort = "desc") {
   const listContainer = document.getElementById("commentList");
   if (!listContainer) return;
@@ -111,22 +107,21 @@ export async function loadComments(articleId, sort = "desc") {
       const avatar = d.photo || "default-avatar.png";
 
       const commentHTML = `
-        <div class="toon-comment mb-3 p-2 rounded border">
-          <div class="d-flex align-items-center mb-1">
-            <img src="${avatar}" class="toon-avatar me-2" alt="avatar">
+        <div class="comment">
+          <img src="${avatar}" alt="avatar">
+          <div class="comment-body">
             <div>
-              <strong class="toon-name">${d.name}</strong>
-              <div class="text-muted small">${date}</div>
+              <span class="comment-name">${d.name}</span>
+              <span class="comment-date">• ${date}</span>
             </div>
+            <div>${d.text}</div>
           </div>
-          <div class="toon-text mt-1">${d.text}</div>
         </div>
       `;
       listContainer.insertAdjacentHTML("beforeend", commentHTML);
     });
   } catch (err) {
     listContainer.innerHTML = "<p class='text-danger'>Error loading comments.</p>";
-    console.error("Error loading comments:", err);
   }
 }
 
