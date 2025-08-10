@@ -114,14 +114,14 @@ window.showFullNews = async function(id) {
           <strong>Comments</strong>
           <div id="commentList" class="mb-3"></div>
 
-          <!-- 🔐 Google Login Button -->
-          <button id="loginToComment" class="btn btn-outline-primary mb-3" onclick="loginToComment()">Login with Google to comment</button>
+          <div id="loginPrompt" class="alert alert-info">
+            <button class="btn btn-primary" onclick="loginToComment()">Sign in with Google to Comment</button>
+          </div>
 
-          <!-- 💬 Comment Form -->
-          <form id="commentForm" class="d-none" onsubmit="submitComment('${id}'); return false;">
-            <textarea id="commentText" class="form-control mb-2" placeholder="Write your comment..." rows="3"></textarea>
-            <button type="submit" class="btn btn-success">Post Comment</button>
-          </form>
+          <div id="commentFormWrapper" class="d-none mb-3">
+            <textarea id="commentText" class="form-control mb-2" rows="3" placeholder="Write your comment..."></textarea>
+            <button class="btn btn-success" onclick="submitComment('${id}')">Post Comment</button>
+          </div>
         </div>
 
         <a href="#" class="btn btn-secondary mt-4" onclick="window.resetHomeView(event)">Back to Home</a>
