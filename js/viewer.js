@@ -128,7 +128,18 @@ window.showFullNews = async function(id) {
       </div>
     `;
 
+    // Load comments
     loadComments(id, "desc");
+
+    // ✅ FIX: Re-check login state after rendering HTML
+    const user = firebase.auth().currentUser;
+    if (user) {
+      document.getElementById("commentFormWrapper")?.classList.remove("d-none");
+      document.getElementById("loginPrompt")?.classList.add("d-none");
+    } else {
+      document.getElementById("commentFormWrapper")?.classList.add("d-none");
+      document.getElementById("loginPrompt")?.classList.remove("d-none");
+    }
 
   } catch (err) {
     container.innerHTML = `<p>Error loading article: ${err.message}</p>`;
